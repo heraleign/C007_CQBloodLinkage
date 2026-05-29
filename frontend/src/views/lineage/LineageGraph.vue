@@ -75,7 +75,18 @@ const graphNodes = computed(() => {
     stage: stageMap[n.node_id] || 'UNKNOWN',
   }))
   if (viewLevel.value === 'ALL') return nodes
-  return nodes.filter((n) => n.stage === viewLevel.value)
+
+  // Keep nodes whose stage matches the view level,
+  // PLUS nodes directly connected by edges of that level
+  // (otherwise edges would have missing endpoints)
+  const levelEdges = rawEdges.value.filter((e) => e.lineage_stage === viewLevel.value)
+  const connectedNodeIds = new Set()
+  levelEdges.forEach((e) => {
+    connectedNodeIds.add(e.source_node_id)
+    connectedNodeIds.add(e.target_node_id)
+  })
+
+  return nodes.filter((n) => n.stage === viewLevel.value || connectedNodeIds.has(n.node_id))
 })
 
 const graphEdges = computed(() => {

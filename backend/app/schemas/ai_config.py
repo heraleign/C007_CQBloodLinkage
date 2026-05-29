@@ -6,10 +6,12 @@ from datetime import datetime
 from decimal import Decimal
 from typing import Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class AiCallConfigCreate(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+
     config_id: str
     ai_capability: str  # SQL_EXTRACT / LINEAGE_PARSE
     model_name: str
@@ -23,6 +25,8 @@ class AiCallConfigCreate(BaseModel):
 
 
 class AiCallConfigUpdate(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+
     model_name: Optional[str] = None
     api_endpoint: Optional[str] = None
     api_key: Optional[str] = None
@@ -34,6 +38,8 @@ class AiCallConfigUpdate(BaseModel):
 
 
 class AiCallConfigOut(BaseModel):
+    model_config = ConfigDict(protected_namespaces=(), from_attributes=True)
+
     config_id: str
     ai_capability: str
     model_name: str
@@ -46,6 +52,3 @@ class AiCallConfigOut(BaseModel):
     enabled: int = 1
     create_time: Optional[datetime] = None
     update_time: Optional[datetime] = None
-
-    class Config:
-        from_attributes = True
